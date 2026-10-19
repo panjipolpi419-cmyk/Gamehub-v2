@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GameHub</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#0f1220;--card:#1a1f36;--text:#eef0f8;--muted:#9aa3c7;--accent:#7c5cff;--accent2:#22d3a6;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f4f5fb;--card:#fff;--text:#161a2e;--muted:#5d6488}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.5;min-height:100vh}
+header{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);border-bottom:1px solid rgba(128,128,160,.15);z-index:10}
+nav{max-width:980px;margin:auto;display:flex;align-items:center;gap:6px;padding:10px 14px;overflow-x:auto}
+.logo{font-weight:800;font-size:1.15rem;margin-right:auto;white-space:nowrap}.logo span{color:var(--accent)}
+nav button{background:none;border:0;color:var(--muted);font:inherit;font-weight:600;padding:8px 13px;border-radius:10px;cursor:pointer;white-space:nowrap}
+nav button.active{background:var(--accent);color:#fff}
+main{max-width:980px;margin:auto;padding:16px}
+.page{display:none}.page.active{display:block}
+.hero{background:linear-gradient(135deg,#7c5cff,#c04cfd);color:#fff;border-radius:20px;padding:28px 22px;margin-bottom:18px}
+.hero h1{font-size:1.6rem;margin-bottom:6px}.hero p{opacity:.9;margin-bottom:16px}
+.btn{display:inline-block;background:#fff;color:#4a2fd0;font-weight:700;padding:10px 18px;border-radius:11px;border:0;cursor:pointer}
+.btn.g{background:var(--accent2);color:#04261d}.btn.full{width:100%;margin-top:6px;text-align:center}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.stat{background:var(--card);border-radius:14px;padding:14px;text-align:center}
+.stat b{display:block;font-size:1.35rem;color:var(--accent)}.stat small{color:var(--muted);font-size:.8rem}
+h2{font-size:1.1rem;margin:20px 0 10px}
+input[type=search]{width:100%;padding:11px 14px;border-radius:12px;border:1px solid rgba(128,128,160,.2);background:var(--card);color:var(--text);font-size:.95rem;margin-bottom:12px;outline:none}
+input[type=text]{width:100%;padding:11px 14px;border-radius:12px;border:1px solid rgba(128,128,160,.2);background:var(--card);color:var(--text);font-size:.95rem;margin-bottom:10px;outline:none}
+input:focus{border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{background:var(--card);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.card h3{font-size:1rem}.card p{color:var(--muted);font-size:.88rem;flex:1}
+.tag{align-self:flex-start;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(124,92,255,.18);color:var(--accent)}
+.tag.mob{background:rgba(34,211,166,.15);color:var(--accent2)}
+.links{display:flex;gap:6px;flex-wrap:wrap;align-items:center;position:relative}
+.links a,.lbtn{font-size:.82rem;font-weight:700;text-decoration:none;padding:6px 12px;border-radius:9px;color:#04261d;background:var(--accent2);border:0;cursor:pointer;font-family:inherit}
+.links a.alt,.lbtn.alt{background:rgba(128,128,160,.18);color:var(--text)}
+.links-wrap{display:flex;flex-direction:column;gap:6px}
+.link-row-ui{display:flex;gap:6px;align-items:center}
+.link-row-ui .lbtn{flex:1;text-align:center}
+.copy-btn{background:rgba(128,128,160,.15);color:var(--text);border:0;border-radius:9px;padding:6px 10px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+.empty{color:var(--muted);text-align:center;padding:28px;font-size:.9rem}
+.share-form{background:var(--card);border-radius:16px;padding:16px;margin-bottom:14px}
+.share-form h3{margin-bottom:12px;font-size:1rem}
+#sMsg{font-size:.85rem;text-align:center;min-height:18px;margin-top:4px;color:var(--accent2)}
+footer{text-align:center;color:var(--muted);font-size:.78rem;padding:28px 16px}
+</style>
+</head>
+<body>
+<!-- ===== ISI DI SINI ===== -->
+<script>
+const SUPA_URL = "https://dzxixehgnketcmmujynb.supabase.co"; // URL Supabase kamu
+const SUPA_KEY = "sb_publishable_dVxJEPmx1r6iSZ2IQNDedw_7dkWpSCT"; // Anon Key Supabase kamu
+</script>
+<!-- ======================== -->
+
+<header><nav>
+  <div class="logo">Game<span>Hub</span></div>
+  <button class="active" data-page="lobby">🏠 Lobby</button>
+  <button data-page="pc">💻 PC</button>
+  <button data-page="mobile">📱 Mobile</button>
+  <button data-page="share">📤 Share</button>
+</nav></header>
+
+<main>
+<section class="page active" id="lobby">
+  <div class="hero">
+    <h1>Selamat datang di GameHub 🎮</h1>
+    <p>Pusat download game PC, mobile, port, dan kiriman dari komunitas.</p>
+    <button class="btn" data-go="pc">Lihat Semua Game</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><b id="cPC">–</b><small>Game PC</small></div>
+    <div class="stat"><b id="cMob">–</b><small>Game Mobile</small></div>
+    <div class="stat"><b id="cSub">–</b><small>Kiriman</small></div>
+  </div>
+  <h2>🔥 Game Populer</h2>
+  <div class="grid" id="gridPop"><div class="empty">Memuat…</div></div>
+</section>
+
+<section class="page" id="pc">
+  <h2>💻 Game PC</h2>
+  <input type="search" id="srchPC" placeholder="Cari game PC…">
+  <div class="grid" id="gridPC"><div class="empty">Memuat…</div></div>
+</section>
+
+<section class="page" id="mobile">
+  <h2>📱 Game Mobile &amp; Port</h2>
+  <input type="search" id="srchMob" placeholder="Cari game mobile / port…">
+  <div class="grid" id="gridMob"><div class="empty">Memuat…</div></div>
+</section>
+
+<section class="page" id="share">
+  <h2>📤 Kirim Game ke Komunitas</h2>
+  <div class="share-form">
+    <h3>Form Kirim</h3>
+    <input type="text" id="sTitle" placeholder="Judul game">
+    <input type="text" id="sLink" placeholder="Link download (https://…)">
+    <input type="text" id="sDesc" placeholder="Deskripsi / versi / ukuran file">
+    <button class="btn g full" id="sBtn">Kirim →</button>
+    <div id="sMsg"></div>
+  </div>
+  <h2>Kiriman Komunitas</h2>
+  <div class="grid" id="gridSub"><div class="empty">Memuat…</div></div>
+</section>
+</main>
+<footer>GameHub © 2026</footer>
+
+<script>
+const {createClient}=supabase;
+let sb=null,games=[],subs=[];
+try{if(SUPA_URL&&SUPA_KEY)sb=createClient(SUPA_URL,SUPA_KEY);}catch(e){}
+const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function openLink(url){
+  try{if(window.Android&&window.Android.openUrl){window.Android.openUrl(url);return;}}catch(e){}
+  var a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+let activeDropdown=null;
+function toggleDropdown(el){
+  if(activeDropdown&&activeDropdown!==el){activeDropdown.classList.remove('open');}
+  el.classList.toggle('open');
+  activeDropdown=el.classList.contains('open')?el:null;
+}
+document.addEventListener('click',function(e){
+  if(activeDropdown&&!activeDropdown.closest('.links').contains(e.target)){activeDropdown.classList.remove('open');activeDropdown=null;}
+});
+function copyLink(url,btn){
+  navigator.clipboard.writeText(url).then(()=>{
+    const old=btn.textContent;btn.textContent='✅';
+    setTimeout(()=>{btn.textContent=old;},1500);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=url;
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);
+    const old=btn.textContent;btn.textContent='✅';
+    setTimeout(()=>{btn.textContent=old;},1500);
+  });
+}
+function cardHTML(g){
+  const links=g.links||[];
+  const rows=links.map(l=>`
+    <div class="link-row-ui">
+      <button class="lbtn" onclick="openLink('${esc(l[1])}')">${esc(l[0])}</button>
+      <button class="copy-btn" onclick="copyLink('${esc(l[1])}',this)">📋 Salin</button>
+    </div>`).join('');
+  return`<div class="card"><span class="tag ${g.type==="mobile"?"mob":""}">${esc(g.tag)}</span><h3>${esc(g.title)}</h3><p>${esc(g.description)}</p><div class="links-wrap">${rows}</div></div>`;
+}
+function subCardHTML(s){
+  return`<div class="card"><span class="tag mob">Komunitas</span><h3>${esc(s.title)}</h3><p>${esc(s.description||"–")}</p><div class="links-wrap"><div class="link-row-ui"><button class="lbtn" onclick="openLink('${esc(s.link)}')">Download</button><button class="copy-btn" onclick="copyLink('${esc(s.link)}',this)">📋 Salin</button></div></div></div>`;
+}
+async function load(){
+  if(!sb){const m='<div class="empty">⚠️ Isi SUPA_URL dan SUPA_KEY dulu.</div>';["gridPop","gridPC","gridMob","gridSub"].forEach(id=>document.getElementById(id).innerHTML=m);return;}
+  const[{data:g},{data:s}]=await Promise.all([sb.from("games").select("*").order("created_at",{ascending:false}),sb.from("submissions").select("*").eq("status","approved").order("created_at",{ascending:false})]);
+  games=g||[];subs=s||[];render();
+}
+function render(){
+  const pc=games.filter(g=>g.type==="pc"),mob=games.filter(g=>g.type==="mobile"),pop=games.filter(g=>g.is_featured);
+  document.getElementById("cPC").textContent=pc.length;
+  document.getElementById("cMob").textContent=mob.length;
+  document.getElementById("cSub").textContent=subs.length;
+  document.getElementById("gridPop").innerHTML=pop.map(cardHTML).join("")||'<div class="empty">Belum ada.</div>';
+  renderFiltered();
+  document.getElementById("gridSub").innerHTML=subs.map(subCardHTML).join("")||'<div class="empty">Belum ada kiriman disetujui.</div>';
+}
+function renderFiltered(){
+  const qp=document.getElementById("srchPC").value.toLowerCase(),qm=document.getElementById("srchMob").value.toLowerCase();
+  document.getElementById("gridPC").innerHTML=games.filter(g=>g.type==="pc"&&(!qp||g.title.toLowerCase().includes(qp))).map(cardHTML).join("")||'<div class="empty">Tidak ditemukan.</div>';
+  document.getElementById("gridMob").innerHTML=games.filter(g=>g.type==="mobile"&&(!qm||g.title.toLowerCase().includes(qm))).map(cardHTML).join("")||'<div class="empty">Tidak ditemukan.</div>';
+}
+document.getElementById("srchPC").oninput=renderFiltered;
+document.getElementById("srchMob").oninput=renderFiltered;
+document.querySelectorAll("nav button[data-page]").forEach(b=>b.onclick=()=>{document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===b.dataset.page));document.querySelectorAll("nav button[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===b.dataset.page));window.scrollTo(0,0);});
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>document.querySelector(`[data-page="${b.dataset.go}"]`).click());
+document.getElementById("sBtn").onclick=async()=>{
+  const t=document.getElementById("sTitle").value.trim(),l=document.getElementById("sLink").value.trim(),d=document.getElementById("sDesc").value.trim(),msg=document.getElementById("sMsg");
+  if(!t||!/^https?:\/\//i.test(l)){msg.style.color="var(--red,#f55)";msg.textContent="Isi judul dan link yang diawali https://";return;}
+  if(!sb){msg.textContent="Database belum dikonfigurasi.";return;}
+  msg.textContent="⏳ Mengirim…";
+  const{error}=await sb.from("submissions").insert({title:t,description:d,link:l,status:"pending"});
+  if(error){msg.style.color="#f55";msg.textContent="Gagal: "+error.message;}
+  else{msg.style.color="var(--accent2)";msg.textContent="✅ Terkirim! Menunggu persetujuan admin.";document.getElementById("sTitle").value=document.getElementById("sLink").value=document.getElementById("sDesc").value="";}
+};
+load();
+</script>
+</body>
+</html>
